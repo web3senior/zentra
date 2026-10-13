@@ -1,0 +1,39 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 140,
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": "*.sol",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 4,
+        "useTabs": false,
+        "singleQuote": false,
+        "bracketSpacing": false
+      }
+    },
+    {
+      "files": "*.test.js",
+      "options": {
+        "semi": true
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 80
+      }
+    },
+    {
+      "files": [
+        "*.html",
+        "*.xhtml"
+      ],
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}

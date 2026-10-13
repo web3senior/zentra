@@ -1,0 +1,118 @@
+@use '../../styles/mixins' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    opacity var(--duration-fast) ease;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &[aria-busy='true'] {
+    cursor: progress;
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // The clip of the ellipsis would cut descenders off a 1em line box; room for them, same layout
+    padding-block: 0.2em;
+    margin-block: -0.2em;
+  }
+
+  &--sm {
+    height: 2.125rem;
+    padding: 0 var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  &--md {
+    height: 2.625rem;
+    padding: 0 var(--space-5);
+    font-size: var(--text-sm);
+  }
+
+  &--lg {
+    height: 3.125rem;
+    padding: 0 var(--space-6);
+    font-size: var(--text-md);
+  }
+
+  &--block {
+    width: 100%;
+  }
+
+  &--icon-only {
+    padding: 0;
+    aspect-ratio: 1;
+  }
+
+  &--primary {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-hover);
+    }
+
+    // A faded accent reads as a broken button; a neutral fill reads as "not yet"
+    &:disabled:not([aria-busy='true']) {
+      background: var(--color-surface-sunken);
+      color: var(--color-text-subtle);
+      opacity: 1;
+    }
+  }
+
+  &--secondary {
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-accent-line);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: var(--color-text);
+
+    &:hover:not(:disabled) {
+      background: var(--color-surface-muted);
+    }
+  }
+
+  &--link {
+    height: auto;
+    padding: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-accent-text);
+    font-weight: var(--weight-medium);
+
+    &:hover:not(:disabled) {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}

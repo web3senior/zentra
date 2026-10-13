@@ -1,3 +1,6 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # esbuild powers tsx (tests, worker); @parcel/watcher is Sass's file watcher
+  esbuild: true
+  '@parcel/watcher': true

@@ -1,0 +1,445 @@
+// The colony's chat panel, on the colony's own tokens (--color-garden-*), docked at the right
+.chat {
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--garden-top) + 96px);
+  right: var(--space-8);
+  bottom: 96px;
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-garden-ripple) 28%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-garden-sky) 95%, transparent);
+  color: var(--color-garden-cream);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(16px);
+  font-size: var(--text-sm);
+
+  button {
+    min-height: 0;
+    font: inherit;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: var(--space-1);
+
+    button {
+      position: relative;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-pill);
+      border-color: transparent;
+      background: transparent;
+      font-size: var(--text-xs);
+
+      &[aria-selected='true'] {
+        background: var(--color-garden-cream);
+        color: var(--color-garden-ink);
+      }
+
+      i {
+        position: absolute;
+        top: var(--space-1);
+        right: var(--space-1);
+        width: 7px;
+        height: 7px;
+        border-radius: var(--radius-pill);
+        background: var(--color-garden-edge-pink);
+      }
+    }
+  }
+
+  &__close {
+    border: 0;
+    background: transparent;
+  }
+
+  &__status,
+  &__flash {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    background: var(--color-garden-bubble);
+    color: var(--color-garden-ripple);
+  }
+
+  &__flash--error {
+    color: var(--color-garden-pink-light);
+  }
+
+  &__place {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      font-size: var(--text-xs);
+      color: var(--color-garden-ripple);
+    }
+
+    select {
+      padding: var(--space-1) var(--space-2);
+      border: 1px solid var(--color-garden-stone);
+      border-radius: var(--radius-sm);
+      background: var(--color-garden-bubble);
+      color: var(--color-garden-cream);
+      font: inherit;
+    }
+
+    small {
+      color: var(--color-garden-ripple);
+      font-size: var(--text-xs);
+    }
+  }
+
+  &__room {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  &__lines {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-1) 0 0;
+  }
+
+  &__loading,
+  &__empty {
+    margin: auto 0;
+    padding: var(--space-6) var(--space-2);
+    text-align: center;
+    color: var(--color-garden-ripple);
+    list-style: none;
+  }
+
+  &__more,
+  &__back {
+    align-self: center;
+    border: 0;
+    background: transparent;
+    color: var(--color-garden-ripple);
+    font-size: var(--text-xs);
+    text-decoration: underline;
+  }
+
+  &__back {
+    align-self: flex-start;
+    display: inline-flex;
+    gap: var(--space-1);
+    text-decoration: none;
+  }
+
+  &__line {
+    position: relative;
+    align-self: flex-start;
+    max-width: 88%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-garden-ripple) 14%, transparent);
+    line-height: 1.5;
+
+    header {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      font-size: var(--text-orbit-tiny);
+      color: var(--color-garden-ripple);
+
+      b {
+        font-weight: var(--weight-semibold);
+        color: var(--color-garden-cream);
+      }
+    }
+
+    p {
+      margin: var(--space-1) 0 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    blockquote {
+      margin: var(--space-1) 0 0;
+      padding-left: var(--space-2);
+      border-left: 2px solid var(--color-garden-stone);
+      font-size: var(--text-xs);
+      color: var(--color-garden-ripple);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:hover .chat__actions,
+    &:focus-within .chat__actions {
+      opacity: 1;
+    }
+
+    &--mine {
+      align-self: flex-end;
+      background: color-mix(in srgb, var(--color-garden-edge-pink) 28%, transparent);
+    }
+
+    &--deleted p {
+      font-style: italic;
+      color: var(--color-garden-ripple);
+    }
+  }
+
+  &__up {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    vertical-align: middle;
+  }
+
+  &__actions {
+    position: absolute;
+    top: calc(-1 * var(--space-3));
+    right: var(--space-2);
+    display: flex;
+    gap: var(--space-1);
+    opacity: 0;
+    transition: opacity var(--duration-fast) ease;
+
+    button {
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border-radius: var(--radius-pill);
+    }
+  }
+
+  &__menu {
+    min-width: 0;
+    padding: var(--space-1);
+    background: var(--color-garden-sky);
+    border-color: color-mix(in srgb, var(--color-garden-ripple) 28%, transparent);
+    color: var(--color-garden-cream);
+  }
+
+  &__emoji {
+    display: flex;
+    gap: var(--space-1);
+
+    button {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      font-size: var(--text-lg);
+      cursor: pointer;
+
+      &:hover {
+        background: var(--color-garden-bubble);
+      }
+    }
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+
+    button {
+      padding: var(--space-2) var(--space-3);
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--color-garden-cream);
+      font-size: var(--text-xs);
+      text-align: left;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--color-garden-bubble);
+      }
+    }
+  }
+
+  &__reactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin: var(--space-1) 0 0;
+    padding: 0;
+    list-style: none;
+
+    button {
+      padding: 0 var(--space-2);
+      border-radius: var(--radius-pill);
+      font-size: var(--text-xs);
+
+      &[aria-pressed='true'] {
+        border-color: var(--color-garden-pink-light);
+      }
+    }
+  }
+
+  &__typing {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-garden-ripple);
+  }
+
+  &__composer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+
+    > div {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-2);
+    }
+
+    textarea {
+      flex: 1;
+      max-height: 120px;
+      padding: var(--space-2) var(--space-3);
+      resize: none;
+      border: 1px solid var(--color-garden-stone);
+      border-radius: var(--radius-md);
+      background: var(--color-garden-bubble);
+      color: var(--color-garden-cream);
+      font: inherit;
+
+      &::placeholder {
+        color: var(--color-garden-ripple);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-garden-pink-light);
+        outline-offset: 1px;
+      }
+    }
+  }
+
+  &__context {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-garden-ripple);
+
+    button {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      text-decoration: underline;
+    }
+  }
+
+  button.chat__send {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-color: var(--color-garden-pink-light);
+    background: var(--color-garden-pink-light);
+    color: var(--color-garden-ink);
+
+    &:disabled {
+      opacity: .45;
+    }
+  }
+
+  button.chat__signin {
+    margin: auto 0;
+    background: var(--color-garden-edge-pink);
+    border-color: var(--color-garden-edge-pink);
+    color: var(--color-garden-hull);
+    font-size: var(--text-sm);
+  }
+
+  &__conversations {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+
+    li > button {
+      width: 100%;
+      justify-content: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-2);
+      text-align: left;
+
+      > span:nth-child(2) {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        small {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: var(--color-garden-ripple);
+        }
+      }
+
+      em {
+        margin-left: auto;
+        min-width: 20px;
+        padding: 0 var(--space-1);
+        border-radius: var(--radius-pill);
+        background: var(--color-garden-edge-pink);
+        color: var(--color-garden-hull);
+        font-style: normal;
+        font-size: var(--text-xs);
+        text-align: center;
+      }
+    }
+  }
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-pill);
+    background: var(--color-garden-pink-light);
+    color: var(--color-garden-ink);
+    font-weight: var(--weight-semibold);
+  }
+}
+
+@media (max-width: 700px) {
+  .chat {
+    top: auto;
+    right: var(--space-3);
+    left: var(--space-3);
+    bottom: var(--space-3);
+    width: auto;
+    height: 70%;
+  }
+}

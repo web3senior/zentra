@@ -1,0 +1,92 @@
+// Ported from hupsocial's NativePopover, on Zentra's tokens
+.panel {
+  padding: var(--space-2);
+  min-width: 220px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+
+  // JS sets top/left — just need fixed positioning
+  position: fixed;
+  inset: auto;
+  margin: 0;
+
+  // Fade plus a 2px settle toward the trigger, no scale
+  opacity: 0;
+  translate: 0 -2px;
+
+  transition:
+    opacity var(--duration-fast) ease,
+    translate var(--duration-fast) ease,
+    overlay var(--duration-fast) ease allow-discrete,
+    display var(--duration-fast) ease allow-discrete;
+
+  &:global(:popover-open) {
+    opacity: 1;
+    translate: 0 0;
+    display: block !important;
+  }
+
+  &[data-placement^='top'] {
+    translate: 0 2px;
+
+    &:global(:popover-open) {
+      translate: 0 0;
+    }
+  }
+
+  &[data-placement='center'] {
+    translate: -50% calc(-50% + 2px);
+
+    &:global(:popover-open) {
+      translate: -50% -50%;
+    }
+  }
+
+  &[data-placement='center']::backdrop,
+  &[data-placement$='-corner']::backdrop {
+    background: transparent;
+    backdrop-filter: blur(0px);
+    transition:
+      background var(--duration-fast) ease,
+      backdrop-filter var(--duration-fast) ease,
+      overlay var(--duration-fast) ease allow-discrete,
+      display var(--duration-fast) ease allow-discrete;
+  }
+
+  &[data-placement='center']:global(:popover-open)::backdrop,
+  &[data-placement$='-corner']:global(:popover-open)::backdrop {
+    background: var(--color-backdrop);
+    backdrop-filter: blur(10px);
+  }
+}
+
+.trigger {
+  all: unset;
+  cursor: pointer;
+}
+
+@supports (transition-behavior: allow-discrete) {
+  @starting-style {
+    .panel:global(:popover-open) {
+      opacity: 0;
+      translate: 0 -2px;
+    }
+
+    .panel[data-placement^='top']:global(:popover-open) {
+      translate: 0 2px;
+    }
+
+    .panel[data-placement='center']:global(:popover-open) {
+      translate: -50% calc(-50% + 2px);
+    }
+
+    .panel[data-placement='center']:global(:popover-open)::backdrop,
+    .panel[data-placement$='-corner']:global(:popover-open)::backdrop {
+      background: transparent;
+      backdrop-filter: blur(0px);
+    }
+  }
+}

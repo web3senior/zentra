@@ -1,0 +1,149 @@
+// The palettes, as mixins the themes apply. Readable's, with Zentra's own pink (#fd1669)
+// for the accent. colony-palette holds the Mars colony's scene colors, the same in both themes.
+
+@mixin colony-palette {
+  --color-garden-sky: #111c30;
+  --color-garden-grass: #749754;
+  --color-garden-edge: #435943;
+  --color-garden-path: #cfc0bb;
+  --color-garden-water: #326c8e;
+  --color-garden-ripple: #9fbfe2;
+  --color-garden-leaf: #285845;
+  --color-garden-leaf-light: #4d7955;
+  --color-garden-pink: #d78bb5;
+  --color-garden-pink-light: #f3b6cf;
+  --color-garden-bark: #6d4c45;
+  --color-garden-stone: #667184;
+  --color-garden-wood: #927366;
+  --color-garden-lamp: #ffcb81;
+  --color-garden-cream: #f3ede4;
+  --color-garden-ink: #253248;
+  --color-garden-blue: #99c6d7;
+  --color-garden-lavender: #b6a4d5;
+  --color-garden-gold: #e6b66e;
+  // Mars colony (the home page map): ground, sky, modules, plot tones and status bubbles
+  --color-garden-regolith: #b4613b;
+  --color-garden-regolith-dark: #7a3a24;
+  --color-garden-rock: #4b2a21;
+  --color-garden-space: #140c15;
+  --color-garden-haze: #b8714f;
+  --color-garden-sun: #ffe1c2;
+  --color-garden-moonrock: #7d6a60;
+  --color-garden-visor: #d8a24a;
+  --color-garden-hull: #e8ecf1;
+  --color-garden-hull-shade: #a9b2bd;
+  // Agent robots: shell, its panel lines, arm joints and the face screen
+  --color-garden-robot: #eef0f8;
+  --color-garden-robot-shade: #c7cbe0;
+  --color-garden-robot-joint: #262640;
+  --color-garden-robot-screen: #23223a;
+  // Universal Profile astronauts: a LUKSO-tinted suit; the UP mark uses --color-garden-edge-lukso
+  --color-garden-up-suit: #ffd9e7;
+  --color-garden-up-shade: #e9a9c1;
+  --color-garden-dome: #c9343f;
+  --color-garden-glass: #7fd3ff;
+  --color-garden-vacant: #3d302d;
+  --color-garden-vacant-edge: #8c6f66;
+  --color-garden-bubble: #1a2232;
+  --color-garden-earth: #3f7fd8;
+  --color-garden-plot-teal: #173f39;
+  --color-garden-edge-teal: #35e0ad;
+  --color-garden-plot-rust: #4a2a22;
+  --color-garden-edge-rust: #ff7a45;
+  --color-garden-plot-violet: #2d2463;
+  --color-garden-edge-violet: #8f6bff;
+  --color-garden-plot-blue: #1b3157;
+  --color-garden-edge-blue: #4aa3ff;
+  --color-garden-plot-pink: #4c1a33;
+  --color-garden-edge-pink: #fd1669;
+  --color-garden-plot-gold: #4a3c1c;
+  --color-garden-edge-gold: #ffc247;
+  // Chain districts take each chain's brand colour (edge) and a dark floor in that hue (plot)
+  --color-garden-edge-lukso: #fe005b;
+  --color-garden-plot-lukso: #4a0d22;
+  --color-garden-edge-monad: #836ef9;
+  --color-garden-plot-monad: #2a2352;
+  --color-garden-edge-base: #0052ff;
+  --color-garden-plot-base: #0d1f4d;
+  --color-garden-edge-celo: #fcff52;
+  --color-garden-plot-celo: #3a3b12;
+}
+
+
+@mixin light-palette {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f4f6f9;
+  --color-surface-sunken: #eceff4;
+  --color-border: #e3e7ee;
+  --color-border-strong: #cdd4de;
+  --color-text: #0f1419;
+  --color-text-muted: #566070;
+  --color-text-subtle: #8a94a3;
+
+  // The brand pink, the same in light and dark, with dark ink (4.8:1; white ink would be 3.8:1).
+  // Hover is a lighter step, since a deeper one would take the dark ink under 4.5:1 (5.4:1). On
+  // white the pink itself is 3.8:1 and 3.4:1 on the soft fill, so a line or an icon takes the
+  // accent as it is, and text a deeper shade that clears 4.5:1 on both (5:1)
+  --color-accent: #fd1669;
+  --color-accent-hover: #fd3980;
+  --color-accent-soft: #ffecf3;
+  --color-accent-line: #fd1669;
+  --color-accent-text: #ca1254;
+  --color-on-accent: #0f1419;
+
+  --color-success: #15803d;
+  --color-success-soft: #e6f6eb;
+  --color-danger: #c62828;
+  --color-danger-soft: #fdecec;
+  --color-warning: #b45309;
+  --color-warning-soft: #fdf3e2;
+
+  --color-backdrop: rgba(15, 20, 25, 0.45);
+  --color-glint: rgba(15, 23, 42, 0.06);
+
+
+  --shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.05);
+  --shadow-md: 0 1px 2px rgba(15, 20, 25, 0.04), 0 8px 24px rgba(15, 20, 25, 0.07);
+  --shadow-lg: 0 2px 6px rgba(15, 20, 25, 0.06), 0 20px 48px rgba(15, 20, 25, 0.12);
+
+  color-scheme: light;
+}
+
+@mixin dark-palette {
+  --color-bg: #0b0e13;
+  --color-surface: #12161d;
+  --color-surface-muted: #181d26;
+  --color-surface-sunken: #1f2531;
+  --color-border: #ffffff14;
+  --color-border-strong: #ffffff26;
+  --color-text: #eef2f7;
+  --color-text-muted: #a3adbb;
+  --color-text-subtle: #737d8c;
+
+  // The accent itself reads as a line on the dark surfaces (4:1 and up, the soft fill included);
+  // text takes a lighter shade that clears 4.5:1 on all of them (4.9:1)
+  --color-accent: #fd1669;
+  --color-accent-hover: #fe508f;
+  --color-accent-soft: #351628;
+  --color-accent-line: #fd1669;
+  --color-accent-text: #fe508f;
+  --color-on-accent: #0f1419;
+
+  --color-success: #4ade80;
+  --color-success-soft: #0f2a1a;
+  --color-danger: #f87171;
+  --color-danger-soft: #2d1414;
+  --color-warning: #fbbf24;
+  --color-warning-soft: #2b2110;
+
+  --color-backdrop: rgba(0, 0, 0, 0.6);
+  --color-glint: rgba(255, 255, 255, 0.07);
+
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.5), 0 20px 48px rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}

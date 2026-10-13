@@ -1,0 +1,37 @@
+@use '../styles/mixins' as *;
+
+// Glass over the page: fixed, translucent and blurred, so the colony runs underneath it. Pages
+// clear it with the body's top padding (Globals.scss); the colony fills the screen behind it.
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+  background: color-mix(in srgb, var(--color-bg) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
+  backdrop-filter: blur(18px) saturate(1.4);
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: var(--header-height);
+    padding: 0 var(--container-gutter);
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__logo {
+    width: auto;
+    height: var(--space-8);
+  }
+}

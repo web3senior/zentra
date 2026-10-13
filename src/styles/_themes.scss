@@ -1,0 +1,70 @@
+// Every color, radius, shadow, size and duration the app paints with. Components read these
+// custom properties and never declare a literal of their own. The colors are in _palettes.scss.
+
+@use 'palettes' as *;
+
+:root {
+  --font-sans: var(--font-inter), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, 'SFMono-Regular', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-display: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --container-max: 1120px;
+  --container-gutter: var(--space-4);
+  --header-height: 4.25rem;
+
+  --duration-fast: 0.13s;
+  --duration: 0.2s;
+  --duration-slow: 0.4s;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-accent-line) 35%, transparent);
+  --radius-orbit: 3px;
+  --text-orbit-tiny: 0.625rem;
+
+  @include light-palette;
+  @include colony-palette;
+}
+
+[data-theme='light'] {
+  @include light-palette;
+}
+
+// Covers a first paint without the theme script; next-themes writes data-theme before paint
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-palette;
+  }
+}
+
+[data-theme='dark'] {
+  @include dark-palette;
+}

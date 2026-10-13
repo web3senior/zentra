@@ -1,0 +1,29 @@
+.page {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--container-gutter) var(--space-16);
+
+  &__intro {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+
+    h1 {
+      margin: 0;
+      font-size: var(--text-2xl);
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__eyebrow {
+    color: var(--color-accent-text);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.06em;
+  }
+}

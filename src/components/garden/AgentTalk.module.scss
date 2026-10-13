@@ -1,0 +1,220 @@
+@use '../../styles/mixins' as *;
+
+// A conversation with a chain agent inside its colony panel: lines, a keyboard of commands and a
+// composer, on the garden's own tokens
+.talk {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+  font-size: var(--text-sm);
+
+  &__back {
+    @include reset-button;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    align-self: flex-start;
+    color: var(--color-garden-ripple);
+    font-size: var(--text-xs);
+    cursor: pointer;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__lines {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 160px;
+    margin: 0;
+    padding: var(--space-1) 0;
+    overflow-y: auto;
+    list-style: none;
+  }
+
+  &__hello {
+    margin: auto 0 0;
+    color: var(--color-garden-ripple);
+    font-size: var(--text-xs);
+    text-align: center;
+  }
+
+  &__line {
+    max-width: 88%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--color-garden-space) 55%, transparent);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    &[data-from='me'] {
+      align-self: flex-end;
+      border-bottom-right-radius: var(--radius-sm);
+      background: var(--color-garden-edge-pink);
+      color: var(--color-garden-hull);
+    }
+
+    &[data-command] {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+
+    &[data-from='agent'] {
+      align-self: flex-start;
+      border-bottom-left-radius: var(--radius-sm);
+    }
+
+    &[data-failed] {
+      border: 1px solid var(--color-garden-edge-gold);
+    }
+
+    &[data-from='system'] {
+      align-self: center;
+      background: transparent;
+      color: var(--color-garden-ripple);
+      font-size: var(--text-xs);
+      text-align: center;
+    }
+  }
+
+  // The commands, like a bot keyboard: two to three to a row
+  &__keyboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: var(--space-1);
+
+    button {
+      @include reset-button;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-1);
+      border: 1px solid color-mix(in srgb, var(--color-garden-ripple) 30%, transparent);
+      border-radius: var(--radius-md);
+      background: color-mix(in srgb, var(--color-garden-space) 40%, transparent);
+      font-size: var(--text-xs);
+      text-align: center;
+      cursor: pointer;
+
+      &[aria-pressed='true'] {
+        border-color: var(--color-garden-cream);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+  }
+
+  &__toolForm {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    border: 1px solid color-mix(in srgb, var(--color-garden-ripple) 30%, transparent);
+    border-radius: var(--radius-md);
+
+    strong {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+
+    label {
+      display: grid;
+      gap: var(--space-1);
+      font-size: var(--text-xs);
+
+      span {
+        color: var(--color-garden-ripple);
+        font-family: var(--font-mono);
+      }
+    }
+
+    input:not([type='checkbox']),
+    select {
+      width: 100%;
+      padding: var(--space-1) var(--space-2);
+      border: 1px solid color-mix(in srgb, var(--color-garden-ripple) 35%, transparent);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--color-garden-space) 55%, transparent);
+      color: var(--color-garden-hull);
+      font: inherit;
+    }
+
+    button {
+      @include reset-button;
+      justify-self: start;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-pill);
+      background: var(--color-garden-cream);
+      color: var(--color-garden-ink);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-semibold);
+      cursor: pointer;
+    }
+  }
+
+  &__composer {
+    display: flex;
+    gap: var(--space-2);
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid color-mix(in srgb, var(--color-garden-ripple) 35%, transparent);
+      border-radius: var(--radius-pill);
+      background: color-mix(in srgb, var(--color-garden-space) 55%, transparent);
+      color: var(--color-garden-hull);
+      font: inherit;
+    }
+
+    button {
+      @include reset-button;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      flex: none;
+      border-radius: var(--radius-pill);
+      background: var(--color-garden-edge-pink);
+      color: var(--color-garden-hull);
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.6;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+  }
+
+  &__signIn {
+    @include reset-button;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    background: var(--color-garden-cream);
+    color: var(--color-garden-ink);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  &__note {
+    color: var(--color-garden-ripple);
+    font-size: var(--text-orbit-tiny);
+  }
+}
