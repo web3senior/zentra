@@ -1,6 +1,8 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # pulled in by WalletConnect; its postinstall only prints a version notice
+  '@reown/appkit': false
   # esbuild powers tsx (tests, worker); @parcel/watcher is Sass's file watcher
   esbuild: true
   '@parcel/watcher': true
