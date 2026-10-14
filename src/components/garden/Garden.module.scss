@@ -191,7 +191,9 @@
       margin-left: var(--space-3);
     }
   }
-  button {
+  // The colony's own button look, at the lowest priority (:where), so a button styled by its
+  // own module (the market's Buy, an agent's chat keys) keeps that style inside the colony
+  :where(&) button {
     display: inline-flex;
     align-items: center;
     justify-content: center;

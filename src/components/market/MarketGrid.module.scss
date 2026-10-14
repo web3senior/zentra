@@ -63,10 +63,12 @@
     gap: var(--space-4);
   }
 
+  // Cards carry the site's own colours, so they read the same inside the colony's dark panel
   &__card {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    color: var(--color-text);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     background: var(--color-surface);
