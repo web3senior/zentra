@@ -153,6 +153,7 @@ export const site = {
       turnLimit: 'The agent reached its model-call limit. Try a simpler request or raise the limit in Configure.',
       cancelled: 'The run stopped or timed out. Completed memory changes may remain; this run still counts toward usage.',
       serverError: 'The workspace could not complete this request. Please try again.',
+      timeout: 'The server took too long to answer. Please try again.',
       network: 'Could not reach the server. Check your connection and try again.',
     },
   },

@@ -10,6 +10,12 @@ const copy = site.agents
 // Sign-in, after hupsocial's: an email and a 6-digit code, the account made on first use. Username
 // and password stays for accounts made before email sign-in. onSignedIn runs once the session cookie
 // is set; the header's session query is refreshed here.
+// A wallet's own failure, with the wallet's short reason when it gives one (viem/wagmi's shortMessage)
+function walletFailure(error) {
+  console.error('[wallet sign-in]', error)
+  const reason = typeof error?.shortMessage === 'string' ? error.shortMessage.slice(0, 160) : ''
+  return reason ? `${copy.walletFailed} (${reason})` : copy.walletFailed
+}
 export default function SignInForm({ onSignedIn }) {
   const queryClient = useQueryClient()
   const [method, setMethod] = useState('email')
@@ -83,7 +89,7 @@ export default function SignInForm({ onSignedIn }) {
   {codeFor && needInvite && <label>{copy.invite}<input name="invite" type="password" autoComplete="off" maxLength={256}/></label>}
   <Button type="submit" block loading={busy}>{codeFor ? copy.verifyCode : copy.sendCode}</Button>
   {codeFor && <div className={styles.signin__actions}><Button variant="secondary" size="sm" disabled={busy} onClick={resend}>{copy.resendCode}</Button><Button variant="ghost" size="sm" disabled={busy} onClick={() => reset('email')}>{copy.changeEmail}</Button></div>}
-  {!codeFor && <WalletSignIn busy={busy} onBusy={setBusy} onError={(err) => setError(!err ? '' : err instanceof RequestError ? errorText(err) : copy.walletFailed)} onDone={async () => { await queryClient.invalidateQueries({ queryKey: ['session'] }); onSignedIn?.(); }}/>}
+  {!codeFor && <WalletSignIn busy={busy} onBusy={setBusy} onError={(err) => setError(!err ? '' : err instanceof RequestError ? errorText(err) : walletFailure(err))} onDone={async () => { await queryClient.invalidateQueries({ queryKey: ['session'] }); onSignedIn?.(); }}/>}
   <button type="button" className={styles.signin__switch} disabled={busy} onClick={() => reset('password')}>{copy.usePassword}</button>
  </form>
 }

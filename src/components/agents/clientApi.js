@@ -13,7 +13,11 @@ export async function api(path, method = 'GET', data, signal) {
     method, signal, cache: 'no-store', headers: data ? { 'Content-Type': 'application/json' } : undefined,
     body: data ? JSON.stringify(data) : undefined,
   })
-  const result = await response.json()
+  // A reply that is not Zentra's JSON (the host's own error page: a crash, a timeout) is still a
+  // server error, never mistaken for a wallet or network failure
+  const result = await response.json().catch(() => null)
+  if (!result)
+    throw new RequestError(response.status === 504 ? 'timeout' : 'serverError', response.status)
   if (!response.ok)
     throw new RequestError(result.error, response.status)
   return result
