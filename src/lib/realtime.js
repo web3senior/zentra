@@ -3,13 +3,28 @@ import { useEffect, useMemo, useSyncExternalStore } from 'react'
 // The browser's side of the realtime process (server/realtime.js): one WebSocket for walking
 // together and live chat. It connects while the colony is visible, closes in hidden tabs, and
 // reconnects with backoff. People are kept here; chat lines are passed to listeners.
+const remote = process.env.NEXT_PUBLIC_REALTIME_URL
 function socketUrl() {
-  if (process.env.NEXT_PUBLIC_REALTIME_URL)
-    return process.env.NEXT_PUBLIC_REALTIME_URL
+  if (remote)
+    return remote
   const { protocol, hostname, host, port } = window.location
   const scheme = protocol === 'https:' ? 'wss' : 'ws'
   // Development: the realtime process listens on its own port; behind nginx it is /ws on the site
   return port === '3010' ? `${scheme}://${hostname}:3011/ws` : `${scheme}://${host}/ws`
+}
+// On another host the session cookie never reaches the realtime process: a signed-in page asks its
+// own site for a one-minute ticket and connects with it. Signed out, it connects as a visitor.
+async function ticketUrl() {
+  if (!remote)
+    return socketUrl()
+  try {
+    const response = await fetch('/api/zentra/realtime/ticket', { cache: 'no-store' })
+    const { ticket } = response.ok ? await response.json() : {}
+    return ticket ? `${remote}${remote.includes('?') ? '&' : '?'}ticket=${encodeURIComponent(ticket)}` : remote
+  }
+  catch {
+    return remote
+  }
 }
 export class Realtime {
   people = new Map()
@@ -43,12 +58,20 @@ export class Realtime {
     this.emit()
   }
   connect() {
-    if (this.socket || this.stopped)
+    if (this.socket || this.opening || this.stopped)
       return
-    const socket = new WebSocket(socketUrl())
-    this.socket = socket
+    this.opening = true
     this.status = 'connecting'
     this.emit()
+    ticketUrl().then((url) => {
+      this.opening = false
+      if (!this.socket && !this.stopped)
+        this.open(url)
+    })
+  }
+  open(url) {
+    const socket = new WebSocket(url)
+    this.socket = socket
     socket.onopen = () => {
       this.attempts = 0
       // Rooms joined before a reconnect are joined again

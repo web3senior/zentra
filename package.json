@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start --port 3010",
     "lint": "eslint",
-    "test:agents": "tsx --tsconfig jsconfig.json --test tests/zentra.test.js tests/operations.test.js tests/registry.test.js tests/jobs.test.js tests/chat.test.js tests/music.test.js tests/mcp.test.js",
+    "test:agents": "tsx --tsconfig jsconfig.json --test tests/zentra.test.js tests/operations.test.js tests/registry.test.js tests/jobs.test.js tests/chat.test.js tests/music.test.js tests/mcp.test.js tests/realtime.test.js",
     "worker": "tsx --tsconfig jsconfig.json scripts/zentra-worker.js",
     "realtime": "tsx --tsconfig jsconfig.json server/realtime.js",
     "up-profiles": "tsx --tsconfig jsconfig.json scripts/up-profiles.js"

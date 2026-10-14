@@ -1,7 +1,7 @@
 import { apiState, removeApi, executeApi, rejectApi } from '@/lib/zentra/apiConnections'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { authenticate, assertOrigin, cookieName, logout, ownerFromRequest, requestEmailCode, setPublicName, userInfo, verifyEmailCode } from '@/lib/zentra/auth'
+import { authenticate, assertOrigin, cookieName, logout, ownerFromRequest, realtimeTicket, requestEmailCode, setPublicName, userInfo, verifyEmailCode } from '@/lib/zentra/auth'
 import { linkWallet, walletNonce, walletSignIn } from '@/lib/zentra/wallets'
 import { blockedBy, directConversations, history, isModerator, markRead, mute, report, setBlock } from '@/lib/zentra/chat'
 import { agentSchema } from '@/lib/zentra/schema'
@@ -97,6 +97,9 @@ async function handler(request, context) {
       if (method === 'POST')
         return json(await talkToAgent(await ownerFromRequest(request), chain, id, await body(request)))
     }
+    // A one-minute ticket for the realtime process when it runs on another host
+    if (route === 'realtime/ticket' && method === 'GET')
+      return json({ ticket: realtimeTicket(await ownerFromRequest(request)) })
     if (route === 'auth/email/request' && method === 'POST') {
       await requestEmailCode(await body(request))
       return json({ ok: true })

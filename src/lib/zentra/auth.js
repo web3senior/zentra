@@ -137,3 +137,20 @@ export function assertOrigin(request) {
   if (!origin || origin !== expected)
     throw new AppError(403, 'origin')
 }
+// A realtime ticket: the realtime process may run on another host than the site (the site on
+// Vercel, realtime on a server), where the session cookie never reaches it. The page asks its own
+// site for a ticket, signed with the shared encryption key and good for one minute, and hands it
+// to the realtime process. owner.expires.signature; it signs in, nothing else.
+const TICKET_MS = 60_000
+export function realtimeTicket(owner) {
+  const payload = `${owner}.${Date.now() + TICKET_MS}`
+  return `${payload}.${secretDigest('realtime', payload)}`
+}
+export function ownerFromTicket(ticket) {
+  const match = /^([\w-]{1,191})\.(\d{1,15})\.([0-9a-f]{64})$/.exec(String(ticket ?? ''))
+  if (!match || Number(match[2]) < Date.now())
+    return null
+  const expected = Buffer.from(secretDigest('realtime', `${match[1]}.${match[2]}`), 'hex')
+  const given = Buffer.from(match[3], 'hex')
+  return expected.length === given.length && timingSafeEqual(expected, given) ? match[1] : null
+}

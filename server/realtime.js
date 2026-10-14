@@ -1,6 +1,7 @@
 // Zentra's realtime process (docs/plans/people-presence-chat.md): people walking together and live
 // chat. One WebSocket endpoint (/ws, port ZENTRA_REALTIME_PORT, default 3011) beside the Next app.
-// The zentra_session cookie signs a connection in; without it a visitor only watches. Positions
+// The zentra_session cookie, or a ticket from the site when this runs on another host
+// (NEXT_PUBLIC_REALTIME_URL), signs a connection in; without either a visitor only watches. Positions
 // live in memory only. Chat lines are written through lib/zentra/chat.js (Zentra's MySQL).
 // Run: pnpm realtime (development uses the dev server's local certificate for wss).
 import { existsSync, readFileSync } from 'node:fs'
@@ -9,8 +10,14 @@ import { createServer as createHttps } from 'node:https'
 import { WebSocketServer } from 'ws'
 import { chatRules } from '@/config/chat'
 import { AppError } from '@/lib/zentra/store'
-import { ownerFromRequest, userInfo } from '@/lib/zentra/auth'
+import { ownerFromRequest, ownerFromTicket, userInfo } from '@/lib/zentra/auth'
 import { blockedBy, deleteMessage, editMessage, postMessage, react, roomAccess } from '@/lib/zentra/chat'
+
+// Same settings as the site: .env.local, then .env (variables already set win). Read before the
+// first database or key use, which happens on connection, not at import
+for (const file of ['.env.local', '.env'])
+  if (existsSync(file))
+    process.loadEnvFile(file)
 
 const PORT = Number(process.env.ZENTRA_REALTIME_PORT || 3011)
 const TICK = 100
@@ -130,11 +137,14 @@ wss.on('connection', async (socket, request) => {
     socket.close(1008, 'origin')
     return
   }
-  let owner = null
-  try {
-    owner = await ownerFromRequest({ headers: new Headers({ cookie: request.headers.cookie || '' }) })
+  // Signed in by the session cookie (same host), or by a ticket from the site (another host)
+  let owner = ownerFromTicket(new URL(request.url, 'http://realtime').searchParams.get('ticket'))
+  if (!owner) {
+    try {
+      owner = await ownerFromRequest({ headers: new Headers({ cookie: request.headers.cookie || '' }) })
+    }
+    catch { /* a visitor: watches only */ }
   }
-  catch { /* a visitor: watches only */ }
   const client = { socket, owner, me: owner ? await userInfo(owner) : null, rooms: new Set(), blocked: owner ? await blockedBy(owner) : new Set(), moveWindow: 0, moves: 0, typedAt: 0, alive: true }
   clients.add(client)
   send(client, { t: 'welcome', you: owner && client.me ? { id: owner, name: client.me.username, up: client.me.up, named: client.me.named } : null, people: peopleFor(client) })
