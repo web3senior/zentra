@@ -4,7 +4,7 @@ import { parseSiweMessage, verifySiweMessage } from 'viem/siwe'
 import { z } from 'zod'
 import { signInChains, signInMessage, universalProfile } from '@/config/wallets'
 import { AppError, db, rateLimit, transaction } from './store'
-import { assertSignup, ownerFromRequest, startSession, uniqueUsername } from './auth'
+import { assertSignup, ownerFromRequest, siteOrigins, startSession, uniqueUsername } from './auth'
 import { readUpProfile, saveUpProfile } from './upProfiles'
 // Wallet sign-in (EIP-4361, after hupsocial's): the server hands out a one-time nonce, the wallet
 // signs a message naming this site, the nonce, the chain and an expiry, and the server checks it.
@@ -40,8 +40,8 @@ export async function isUniversalProfile(address) {
     return false
   }
 }
-// The domain a message must name: the site's own host
-const hostOf = (request) => new URL(process.env.ZENTRA_APP_ORIGIN || request.url).host
+// The domains a message may name: this site's own hosts (see siteOrigins)
+const siteHosts = (request) => new Set([...siteOrigins(request)].map((origin) => new URL(origin).host))
 async function checkSignature(request, input) {
   const { message, signature, invite } = verifySchema.parse(input)
   let fields
@@ -51,7 +51,7 @@ async function checkSignature(request, input) {
   catch {
     throw new AppError(400, 'walletSignature')
   }
-  if (!fields.address || !fields.nonce || !fields.chainId || fields.domain !== hostOf(request))
+  if (!fields.address || !fields.nonce || !fields.chainId || !siteHosts(request).has(fields.domain))
     throw new AppError(400, 'walletSignature')
   const address = getAddress(fields.address)
   // The nonce works once, for this address, until it expires
@@ -60,7 +60,7 @@ async function checkSignature(request, input) {
     throw new AppError(400, 'walletNonce')
   let valid = false
   try {
-    valid = await verifySiweMessage(clientFor(fields.chainId), { message, signature, domain: hostOf(request), nonce: fields.nonce })
+    valid = await verifySiweMessage(clientFor(fields.chainId), { message, signature, domain: fields.domain, nonce: fields.nonce })
   }
   catch (error) {
     if (error instanceof AppError)

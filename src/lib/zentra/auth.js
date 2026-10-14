@@ -131,10 +131,24 @@ export async function logout(request) {
   if (token)
     await db().prepare('DELETE FROM sessions WHERE token = ?').run(digest(token))
 }
+// The origins this site answers as: the configured ones (ZENTRA_APP_ORIGIN, NEXT_PUBLIC_BASE_URL,
+// trailing slashes ignored) and the host the request actually arrived on, behind a proxy too
+// (Vercel's x-forwarded-host). A page elsewhere never matches its own origin to this host.
+export function siteOrigins(request) {
+  const url = new URL(request.url)
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || url.host
+  const proto = request.headers.get('x-forwarded-proto') || url.protocol.replace(':', '')
+  const configured = [process.env.ZENTRA_APP_ORIGIN, process.env.NEXT_PUBLIC_BASE_URL].flatMap((value) => { try {
+    return value ? [new URL(value).origin] : []
+  }
+  catch {
+    return []
+  } })
+  return new Set([...configured, `${proto}://${host}`, url.origin])
+}
 export function assertOrigin(request) {
   const origin = request.headers.get('origin')
-  const expected = process.env.ZENTRA_APP_ORIGIN || new URL(request.url).origin
-  if (!origin || origin !== expected)
+  if (!origin || !siteOrigins(request).has(origin))
     throw new AppError(403, 'origin')
 }
 // A realtime ticket: the realtime process may run on another host than the site (the site on

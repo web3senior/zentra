@@ -97,9 +97,12 @@ async function handler(request, context) {
       if (method === 'POST')
         return json(await talkToAgent(await ownerFromRequest(request), chain, id, await body(request)))
     }
-    // A one-minute ticket for the realtime process when it runs on another host
-    if (route === 'realtime/ticket' && method === 'GET')
-      return json({ ticket: realtimeTicket(await ownerFromRequest(request)) })
+    // A one-minute ticket for the realtime process when it runs on another host; signed out, none
+    // (an answer, not an error, so a visitor's console stays clean)
+    if (route === 'realtime/ticket' && method === 'GET') {
+      const owner = await ownerFromRequest(request).catch(() => null)
+      return json({ ticket: owner ? realtimeTicket(owner) : null })
+    }
     if (route === 'auth/email/request' && method === 'POST') {
       await requestEmailCode(await body(request))
       return json({ ok: true })
