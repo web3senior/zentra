@@ -93,3 +93,22 @@ cd /srv/zentra && git pull && pnpm install && pnpm build && pm2 reload all
 `pnpm dev:ssl` for the site (https://localhost:3010) and, in a second terminal, `pnpm realtime`
 for walking together and chat. The realtime process uses the dev server's local certificate in
 `certificates/`, so start `pnpm dev:ssl` once first.
+
+## The site on Vercel, realtime on your server
+
+Vercel cannot keep the realtime process running, so it can run on your own server instead
+(set up on server1.huplabs.com on 2026-10-14):
+
+- **Server:** the repository in `/srv/zentra`, `pnpm install`, a `.env` with
+  `ZENTRA_DATABASE_URL` (local), `ZENTRA_ENCRYPTION_KEY` (the same as Vercel's),
+  `ZENTRA_APP_ORIGIN` and `NEXT_PUBLIC_BASE_URL` (the Vercel site's address), then
+  `pm2 start deploy/ecosystem.config.cjs --only zentra-realtime && pm2 save`.
+- **HTTPS:** Caddy serves `realtime.huplabs.com` and passes `/ws` to port 3011 (port 3011 stays
+  closed to the outside). Its DNS A record points at the server.
+- **Vercel:** `NEXT_PUBLIC_REALTIME_URL=wss://realtime.huplabs.com/ws`, then redeploy.
+
+The session cookie belongs to the Vercel site and never reaches the realtime host, so a signed-in
+page asks its own site for a one-minute ticket (`/api/zentra/realtime/ticket`), signed with the
+shared encryption key, and connects with it.
+
+Updating the server: `cd /srv/zentra && git pull && pnpm install && pm2 reload zentra-realtime`.
