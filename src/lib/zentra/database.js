@@ -70,7 +70,10 @@ async function open() {
   const name = decodeURIComponent(url.pathname.slice(1))
   if (!/^[A-Za-z0-9_]+$/.test(name))
     throw new Error('Invalid database name')
-  const options = { host: url.hostname, port: Number(url.port || 3306), user: decodeURIComponent(url.username), password: decodeURIComponent(url.password), charset: 'utf8mb4', supportBigNumbers: true, decimalNumbers: true }
+  // ?ssl=true encrypts the connection (a database reached over the internet, e.g. from Vercel).
+  // As hupsocial does, the server's certificate is not verified: MariaDB 11.8 makes its own.
+  const ssl = url.searchParams.get('ssl') === 'true' ? { rejectUnauthorized: false } : undefined
+  const options = { host: url.hostname, port: Number(url.port || 3306), user: decodeURIComponent(url.username), password: decodeURIComponent(url.password), charset: 'utf8mb4', supportBigNumbers: true, decimalNumbers: true, ssl }
   const setup = await mysql.createConnection(options)
   try {
     await setup.query(`CREATE DATABASE IF NOT EXISTS \`${name}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`)
@@ -78,7 +81,10 @@ async function open() {
   finally {
     await setup.end()
   }
-  pool = mysql.createPool({ ...options, database: name, connectionLimit: 10 })
+  // In production every serverless instance has its own pool: a few connections, idle ones
+  // handed back, so many instances never exhaust the server's max_connections (shared with Hup)
+  const production = process.env.NODE_ENV === 'production'
+  pool = mysql.createPool({ ...options, database: name, connectionLimit: production ? 3 : 10, maxIdle: production ? 1 : 10, idleTimeout: 30000, enableKeepAlive: true })
   for (const statement of SCHEMA)
     await pool.query(statement)
 }
